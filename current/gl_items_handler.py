@@ -187,4 +187,3 @@ class GLItemHandler():
                 string += f'{item_string:<20}\n'
 
         return string
-

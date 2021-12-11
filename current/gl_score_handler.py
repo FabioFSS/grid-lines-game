@@ -1,4 +1,3 @@
-
 class GLScoreHandler():
     '''
     GridLines game score handler.
@@ -97,4 +96,3 @@ class GLScoreHandler():
         string += f'Turn: {self.__trun}\n'
 
         return string
-
