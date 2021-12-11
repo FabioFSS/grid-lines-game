@@ -41,10 +41,6 @@ class ItemDrawer():
                 if self.__item[i][j] != None:
                     pygame.draw.rect(self.__window, self.__color, position)
 
-        print(self.__item)
-
-        input()
-
     def __resize_item(self) -> None:
         '''
         Resizes the item to a 3x3 matrix.
@@ -183,4 +179,3 @@ class DrawingHandler():
 
             item = ItemDrawer(self.__window, pool[i], item_color)
             item.draw(x, y, width, height)
-            
