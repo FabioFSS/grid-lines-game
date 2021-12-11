@@ -1,2 +1,2 @@
-# grid-lines-game
-A simple complete the lines grid game written with python.
+# Grid Lines
+A simple complete the lines/columns game written with python with pygame.
