@@ -9,7 +9,7 @@ class GridLines():
     GridLines class. Creates and controls an instance of the game.
     '''
 
-    def __init__(self, board_size=10) -> None:
+    def __init__(self, board_size=10, pool_size=3, char='o') -> None:
         '''
         Initializes a GridLines game.
 
@@ -20,7 +20,7 @@ class GridLines():
 
         self.__board_size = board_size
         self.__board = [[' ' for j in range(self.__board_size)] for i in range(self.__board_size)]
-        self.__items_handler = GLItemHandler()
+        self.__items_handler = GLItemHandler(char, pool_size)
         self.__score_handler = GLScoreHandler()
 
         self.__current_line = 0
