@@ -78,6 +78,28 @@ class DrawingHandler():
         self.__game = game
 
 
+    def __random_color(self) -> tuple:
+        '''
+        Returns a random color.
+
+        Returns:
+            -chosen_color (tuple): a random color from a tuple of colors.
+        '''
+        
+        colors = (
+                (128, 0, 128),
+                (128, 128, 0),
+                (0, 128, 128),
+                (0, 0, 128),
+                (128, 0, 0),
+                (0, 128, 0)
+                )
+
+        chosen_color = rd.choice(colors)
+
+        return chosen_color
+
+
     def draw_field(self) -> None:
         '''
         Draws the field of the game.
@@ -97,6 +119,28 @@ class DrawingHandler():
         pygame.draw.rect(self.__window, back_color, position)
 
         line_color = (200, 200, 200)
+
+        if self.__game.get_current_item() == None:
+            field = self.__game.get_board()
+
+        else:
+            field = self.__game.get_temporary_board()
+
+        for i in range(BOARD_SIZE):
+            for j in range(BOARD_SIZE):
+                block = field[i][j]
+
+                if block != ' ':
+                    color = (128, 0, 0)
+
+                    width = (field_width / BOARD_SIZE)
+                    height = (field_height / BOARD_SIZE)
+                    x = j * width + field_x
+                    y = i * height + field_y
+
+                    position = (x, y, width, height)
+
+                    pygame.draw.rect(self.__window, color, position)        
 
         # drawing horizontal lines
         for i in range(BOARD_SIZE+1):
@@ -126,27 +170,6 @@ class DrawingHandler():
 
             pygame.draw.line(self.__window, line_color, first_point, second_point, weight)
 
-
-    def __random_color(self):
-        '''
-        Returns a random color.
-
-        Returns:
-            -chosen_color (tuple): a random color from a tuple of colors.
-        '''
-        
-        colors = (
-                (128, 0, 128),
-                (128, 128, 0),
-                (0, 128, 128),
-                (0, 0, 128),
-                (128, 0, 0),
-                (0, 128, 0)
-                )
-
-        chosen_color = rd.choice(colors)
-
-        return chosen_color
 
     def draw_pool(self):
         '''

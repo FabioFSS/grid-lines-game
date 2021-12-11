@@ -82,8 +82,9 @@ class GridLines():
             -number (int): the number of the selected item.
         '''
 
-        self.__items_handler.select_item(number)
-        self.__items_handler.refresh_pool()
+        if self.get_current_item() == None:
+            self.__items_handler.select_item(number)
+            self.__items_handler.refresh_pool()
 
 
     def move_item(self, direction) -> None:
@@ -94,36 +95,37 @@ class GridLines():
             -direction (string): the direction you want to move the item.
         '''
 
-        self.__score_handler.increase_turn()
+        if self.get_current_item() != None:
+            self.__score_handler.increase_turn()
 
-        item = self.__items_handler.get_current_item()
+            item = self.__items_handler.get_current_item()
 
-        if direction == 'right':
-            if self.__current_line + len(item[0]) < self.__board_size:
-                self.__current_line += 1
+            if direction == 'right':
+                if self.__current_line + len(item[0]) < self.__board_size:
+                    self.__current_line += 1
+                    return True
+
+            if direction == 'left':
+                if self.__current_line > 0:
+                    self.__current_line -= 1
+                    return True
+
+            if direction == 'down':
+                if self.__current_column + len(item) < self.__board_size:
+                    self.__current_column += 1
+                    return True
+
+            if direction == 'up':
+                if self.__current_column > 0:
+                    self.__current_column -= 1
+                    return True
+
+            if direction == 'place' and self.__verify_place():
+                self.__place_item()
+                self.__items_handler.reset_current_item()
+                self.__reset_position()
+                self.__score_handler.check_board(self.__board)
                 return True
-
-        if direction == 'left':
-            if self.__current_line > 0:
-                self.__current_line -= 1
-                return True
-
-        if direction == 'down':
-            if self.__current_column + len(item) < self.__board_size:
-                self.__current_column += 1
-                return True
-
-        if direction == 'up':
-            if self.__current_column > 0:
-                self.__current_column -= 1
-                return True
-
-        if direction == 'place' and self.__verify_place():
-            self.__place_item()
-            self.__items_handler.reset_current_item()
-            self.__reset_position()
-            self.__score_handler.check_board(self.__board)
-            return True
 
         return False
 
@@ -160,6 +162,18 @@ class GridLines():
         return string
 
 
+    def get_current_item(self) -> list:
+        '''
+        Returns the current item.
+
+        Returns:
+            -item (list): the currently selected item.
+        '''
+
+        item = self.__items_handler.get_current_item()
+
+        return item
+
     def get_pool(self) -> list:
         '''
         Returns the game's pool.
@@ -171,6 +185,34 @@ class GridLines():
         pool = self.__items_handler.get_pool()
 
         return pool
+
+
+    def get_board(self) -> list:
+        '''
+        Returns the game board.
+
+        Returns:
+            -board (list): the games board.
+        '''
+
+        board = self.__board
+
+        return board
+
+
+    def get_temporary_board(self) -> list:
+        '''
+        Returns a temporary board.
+
+        Returns:
+            -board (list): the temporary game board.
+        '''
+
+        temp_board = cp.deepcopy(self.__board)
+        self.__place_item(temp_board, True)
+
+        return temp_board
+
 
     def __str__(self) -> str:
         '''
