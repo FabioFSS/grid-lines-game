@@ -183,3 +183,4 @@ class DrawingHandler():
 
             item = ItemDrawer(self.__window, pool[i], item_color)
             item.draw(x, y, width, height)
+            
