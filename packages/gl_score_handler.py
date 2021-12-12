@@ -53,6 +53,32 @@ class GLScoreHandler():
         self.__turn += 1
 
 
+    def get_score(self) -> int:
+        '''
+        Returns the current score.
+
+        Returns:
+            -score (int): current score.
+        '''
+
+        score = self.__score
+
+        return score
+
+
+    def get_turn(self) -> int:
+        '''
+        Returns the current turn.
+
+        Returns:
+            -turn (int): current turn.
+        '''
+
+        turn = self.__turn
+
+        return turn
+
+
     def __clear_completed_lines(self, board) -> None:
         '''
         Clears the completed lines and columns of a board.

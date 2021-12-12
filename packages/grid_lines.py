@@ -1,5 +1,7 @@
 import copy as cp
 import os
+
+from numpy.lib.function_base import place
 from packages.gl_items_handler import GLItemHandler
 from packages.gl_score_handler import GLScoreHandler
 
@@ -23,7 +25,7 @@ class GridLines():
         self.__items_handler = GLItemHandler(char, pool_size)
         self.__score_handler = GLScoreHandler()
 
-        self.__current_line = 0
+        self.__current_row = 0
         self.__current_column = 0
 
 
@@ -36,7 +38,7 @@ class GridLines():
         '''
         
         item = self.__items_handler.get_current_item()
-        line, column = self.__current_line, self.__current_column
+        line, column = self.__current_row, self.__current_column
 
         placeable = True
         for i in range(len(item)):
@@ -57,7 +59,7 @@ class GridLines():
 
         if self.__verify_place() or temporary:
             item = self.__items_handler.get_current_item()
-            line, column = self.__current_line, self.__current_column
+            line, column = self.__current_row, self.__current_column
             
             for i in range(len(item)):
                 item[i]
@@ -70,8 +72,32 @@ class GridLines():
 
 
     def __reset_position(self) -> None:
+        '''
+        Resets the current position.
+        '''
         self.__current_column = 0
-        self.__current_line = 0
+        self.__current_row = 0
+
+
+    def check_game_over(self) -> bool:
+        item = self.__items_handler.get_current_item()
+        
+        if item != None:
+            for k in range(self.__board_size - len(item)+1):
+                for l in range(self.__board_size - len(item[0])+1):
+                    row, column = k, l
+                    
+                    placeable = True
+                    for i in range(len(item)):
+                        for j in range(len(item[0])):
+                            if item[i][j] != None and self.__board[row+i][column+j] != ' ':
+                                placeable = False
+
+                    if placeable:
+                        return False
+
+            return True
+        return False
 
 
     def select_item(self, number) -> None:
@@ -101,13 +127,13 @@ class GridLines():
             item = self.__items_handler.get_current_item()
 
             if direction == 'right':
-                if self.__current_line + len(item[0]) < self.__board_size:
-                    self.__current_line += 1
+                if self.__current_row + len(item[0]) < self.__board_size:
+                    self.__current_row += 1
                     return True
 
             if direction == 'left':
-                if self.__current_line > 0:
-                    self.__current_line -= 1
+                if self.__current_row > 0:
+                    self.__current_row -= 1
                     return True
 
             if direction == 'down':
@@ -161,7 +187,6 @@ class GridLines():
 
         return string
 
-
     def get_current_item(self) -> list:
         '''
         Returns the current item.
@@ -200,6 +225,22 @@ class GridLines():
         return board
 
 
+    def get_item_mask(self) -> list:
+        '''
+        Returns a mask with the size of the board for the place of
+        the current item place.
+
+        Returns:
+            -board (list): the board mask with the current item's
+            position.
+        '''
+
+        board = [[' ' for j in range(self.__board_size)] for i in range(self.__board_size)]
+        self.__place_item(board, True)
+
+        return board
+
+
     def get_temporary_board(self) -> list:
         '''
         Returns a temporary board.
@@ -213,6 +254,31 @@ class GridLines():
 
         return temp_board
 
+
+    def get_score(self) -> int:
+        '''
+        Returns current score.
+
+        Returns:
+            -score (int): current score.
+        '''
+
+        score = self.__score_handler.get_score()
+
+        return score
+
+    
+    def get_turn(self) -> int:
+        '''
+        Returns the current turn.
+
+        Returns:
+            -turn (int): current turn.
+        '''
+
+        turn = self.__score_handler.get_turn()
+
+        return turn
 
     def __str__(self) -> str:
         '''

@@ -18,7 +18,7 @@ class ItemDrawer():
         '''
 
         self.__window = window
-        self.__color = color
+        self.__color = BLOCK_COLOR
         
         self.__item = cp.deepcopy(item)
         self.__resize_item()
@@ -40,6 +40,7 @@ class ItemDrawer():
                 position = (square_x, square_y, square_width, square_height)
                 if self.__item[i][j] != None:
                     pygame.draw.rect(self.__window, self.__color, position)
+
 
     def __resize_item(self) -> None:
         '''
@@ -105,12 +106,16 @@ class DrawingHandler():
         Draws the field of the game.
         '''
 
-        # drawing background
-        back_color = (0, 32, 64)
-        
+        # defining colors
+        back_color = FIELD_COLOR
+        line_color = LINE_COLOR
+        block_color = BLOCK_COLOR
+        mask_color = MASK_COLOR
+
+        # drawing field background
         padding = 50
         field_width = WINDOW_WIDTH - padding - 200
-        field_height = WINDOW_HEIGHT - padding
+        field_height = WINDOW_HEIGHT - padding - 100
         field_x = padding/2
         field_y = padding/2
 
@@ -118,20 +123,17 @@ class DrawingHandler():
 
         pygame.draw.rect(self.__window, back_color, position)
 
-        line_color = (200, 200, 200)
+        field = self.__game.get_board()
 
-        if self.__game.get_current_item() == None:
-            field = self.__game.get_board()
+        if self.__game.get_current_item() != None:
+            item_mask = self.__game.get_item_mask()
 
-        else:
-            field = self.__game.get_temporary_board()
-
+        # drawing board and items on the board
         for i in range(BOARD_SIZE):
             for j in range(BOARD_SIZE):
                 block = field[i][j]
-
+    
                 if block != ' ':
-                    color = (128, 0, 0)
 
                     width = (field_width / BOARD_SIZE)
                     height = (field_height / BOARD_SIZE)
@@ -140,7 +142,20 @@ class DrawingHandler():
 
                     position = (x, y, width, height)
 
-                    pygame.draw.rect(self.__window, color, position)        
+                    pygame.draw.rect(self.__window, block_color, position)        
+                
+                if self.__game.get_current_item() != None:
+                    mask_block = item_mask[i][j]
+
+                    if mask_block != ' ':
+                        width = (field_width / BOARD_SIZE)
+                        height = (field_height / BOARD_SIZE)
+                        x = j * width + field_x
+                        y = i * height + field_y
+
+                        position = (x, y, width, height)
+
+                        pygame.draw.rect(self.__window, mask_color, position)        
 
         # drawing horizontal lines
         for i in range(BOARD_SIZE+1):
@@ -178,8 +193,7 @@ class DrawingHandler():
 
         pool = self.__game.get_pool()
 
-        pool_color = (0, 32, 64)
-    
+        pool_color = BACKGROUND_COLOR
         padding = 50
         pool_x = (WINDOW_WIDTH - padding - 200) + (padding)
         pool_y = padding/2
@@ -202,3 +216,17 @@ class DrawingHandler():
 
             item = ItemDrawer(self.__window, pool[i], item_color)
             item.draw(x, y, width, height)
+
+
+    def draw_score(self):
+        '''
+        Draws the game score and turn.
+        '''
+        
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        score_text = font.render(f'Score: {self.__game.get_score()}    Turn: {self.__game.get_turn()}', True, LINE_COLOR)
+        score_text_rectangle = score_text.get_rect()
+        score_text_rectangle.center = (175, WINDOW_HEIGHT-50)
+
+        self.__window.blit(score_text, score_text_rectangle)
+
